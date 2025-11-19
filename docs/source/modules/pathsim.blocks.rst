@@ -71,6 +71,12 @@ Elementary mathematical operations and transformations.
 
       Custom user-defined functions for arbitrary signal transformations.
 
+   .. grid-item-card:: Table
+      :link: pathsim.blocks.table
+      :link-type: doc
+
+      Lookup tables for nonlinear mappings and data interpolation.
+
 ----
 
 Signal Processing
@@ -92,12 +98,6 @@ Filters and signal conditioning blocks.
       :link-type: doc
 
       Finite impulse response filters with arbitrary coefficients.
-
-   .. grid-item-card:: Spectrum
-      :link: pathsim.blocks.spectrum
-      :link-type: doc
-
-      Frequency domain analysis and spectrum estimation.
 
    .. grid-item-card:: Converters
       :link: pathsim.blocks.converters
@@ -240,7 +240,7 @@ Integration with external simulation tools and custom code.
 Analysis & Monitoring
 ---------------------
 
-Tools for observing and analyzing simulation results.
+Tools for recording and analyzing simulation results.
 
 .. grid:: 2
    :gutter: 3
@@ -251,11 +251,11 @@ Tools for observing and analyzing simulation results.
 
       Signal recording and visualization for time-domain analysis.
 
-   .. grid-item-card:: Table
-      :link: pathsim.blocks.table
+   .. grid-item-card:: Spectrum
+      :link: pathsim.blocks.spectrum
       :link-type: doc
 
-      Lookup tables for nonlinear mappings and data interpolation.
+      Signal recording and visualization for frequency-domain analysis.
 
 ----
 

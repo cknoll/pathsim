@@ -1,5 +1,5 @@
-pathsim.blocks.fmu module
-==========================
+FMU
+===
 
 .. automodule:: pathsim.blocks.fmu
    :members:
