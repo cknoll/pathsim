@@ -83,16 +83,16 @@ The `Simulation` instance manages the blocks and connections and advances the sy
 ```python
 from pathsim import Simulation, Connection
 
-#import the blocks we need for the harmonic oscillator
+# import the blocks we need for the harmonic oscillator
 from pathsim.blocks import Integrator, Amplifier, Adder, Scope
 
-#initial position and velocity
+# initial position and velocity
 x0, v0 = 2, 5
 
-#parameters (mass, damping, spring constant)
+# parameters (mass, damping, spring constant)
 m, c, k = 0.8, 0.2, 1.5
 
-#define the blocks
+# define the blocks
 I1 = Integrator(v0)   # integrator for velocity
 I2 = Integrator(x0)   # integrator for position
 A1 = Amplifier(-c/m)
@@ -102,25 +102,25 @@ Sc = Scope(labels=["v(t)", "x(t)"])
 
 blocks = [I1, I2, A1, A2, P1, Sc]
 
-#define the connections between the blocks
+# define the connections between the blocks
 connections = [
     Connection(I1, I2, A1, Sc),   # one to many connection
     Connection(I2, A2, Sc[1]),
     Connection(A1, P1),           # default connection to port 0
     Connection(A2, P1[1]),        # specific connection to port 1
-    Connection(P1, I1)
+    Connection(P1, I1),
     ]
 
-#create a simulation instance from the blocks and connections
+# create a simulation instance from the blocks and connections
 Sim = Simulation(blocks, connections, dt=0.05)
 
-#run the simulation for 30 seconds
+# run the simulation for 30 seconds
 Sim.run(duration=30.0)
 
-#plot the results directly from the scope
+# plot the results directly from the scope
 Sc.plot()
 
-#read the results from the scope for further processing
+# read the results from the scope for further processing
 time, data = Sc.read()
 ```
 
@@ -150,16 +150,16 @@ Lets translate it to PathSim using two `Integrator` blocks and a `Function` bloc
 from pathsim import Simulation, Connection
 from pathsim.blocks import Integrator, Scope, Function
 
-#implicit adaptive timestep solver
+# implicit adaptive timestep solver
 from pathsim.solvers import ESDIRK54
 
-#initial conditions
+# initial conditions
 x1, x2 = 2, 0
 
-#van der Pol parameter (1000 is very stiff)
+# van der Pol parameter (1000 is very stiff)
 mu = 1000
 
-#blocks that define the system
+# blocks that define the system
 Sc = Scope(labels=["$x_1(t)$"])
 I1 = Integrator(x1)
 I2 = Integrator(x2)
@@ -167,27 +167,27 @@ Fn = Function(lambda x1, x2: mu*(1 - x1**2)*x2 - x1)
 
 blocks = [I1, I2, Fn, Sc]
 
-#the connections between the blocks
+# the connections between the blocks
 connections = [
     Connection(I2, I1, Fn[1]),
     Connection(I1, Fn, Sc),
     Connection(Fn, I2)
     ]
 
-#initialize simulation with the blocks, connections, timestep and logging enabled
+# initialize simulation with the blocks, connections, timestep and logging enabled
 Sim = Simulation(
     blocks,
     connections,
     dt=0.05,
     Solver=ESDIRK54,
     tolerance_lte_abs=1e-5,
-    tolerance_lte_rel=1e-3
+    tolerance_lte_rel=1e-3,
     )
 
-#run simulation for some number of seconds
+# run simulation for some number of seconds
 Sim.run(3*mu)
 
-#plot the results directly (steps highlighted)
+# plot the results directly (steps highlighted)
 Sc.plot(".-")
 ```
 
@@ -219,13 +219,13 @@ from pathsim import Simulation, Connection
 from pathsim.blocks import Integrator, Constant, Scope
 from pathsim.solvers import RKBS32
 
-#event library
+# event library
 from pathsim.events import ZeroCrossing
 
-#initial values
+# initial values
 x0, v0 = 1, 10
 
-#blocks that define the system
+# blocks that define the system
 Ix = Integrator(x0)     # v -> x
 Iv = Integrator(v0)     # a -> v
 Cn = Constant(-9.81)    # gravitational acceleration
@@ -233,48 +233,48 @@ Sc = Scope(labels=["x", "v"])
 
 blocks = [Ix, Iv, Cn, Sc]
 
-#the connections between the blocks
+# the connections between the blocks
 connections = [
     Connection(Cn, Iv),
     Connection(Iv, Ix),
     Connection(Ix, Sc)
     ]
 
-#event function for zero crossing detection
+# event function for zero crossing detection
 def func_evt(t):
-    i, o, s = Ix() #get block inputs, outputs and states
+    i, o, s = Ix()  # get block inputs, outputs and states
     return s
 
-#action function for state transformation
+# action function for state transformation
 def func_act(t):
     i1, o1, s1 = Ix()
     i2, o2, s2 = Iv()
     Ix.engine.set(abs(s1))
     Iv.engine.set(-0.9*s2)
 
-#event (zero-crossing) -> ball makes contact
+# event (zero-crossing) -> ball makes contact
 E1 = ZeroCrossing(
     func_evt=func_evt,
     func_act=func_act,
-    tolerance=1e-4
+    tolerance=1e-4,
     )
 
 events = [E1]
 
-#initialize simulation with the blocks, connections, timestep
+# initialize simulation with the blocks, connections, timestep
 Sim = Simulation(
     blocks,
     connections,
     events,
     dt=0.1,
     Solver=RKBS32,
-    dt_max=0.1
+    dt_max=0.1,
     )
 
-#run the simulation
+# run the simulation
 Sim.run(20)
 
-#plot the recordings from the scope
+# plot the recordings from the scope
 Sc.plot()
 ```
 
@@ -291,10 +291,10 @@ fig, ax = plt.subplots(figsize=(8,4), tight_layout=True, dpi=120)
 
 time, _ = Sc.read()
 
-#add detected events
+# add detected events
 for t in E1: ax.axvline(t, ls="--", c="k")
 
-#plot the timesteps
+# plot the timesteps
 ax.plot(time[:-1], np.diff(time))
 
 ax.set_yscale("log")
