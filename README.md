@@ -59,7 +59,7 @@ pip install pathsim
 
 ## Example - Harmonic Oscillator
 
-There are lots of [examples](https://github.com/pathsim/pathsim/tree/master/examples) of dynamical system simulations in the GitHub repository that showcase PathSim's capabilities. 
+There are lots of [examples](https://github.com/pathsim/pathsim/tree/master/examples) of dynamical system simulations in the GitHub repository that showcase PathSim's capabilities.
 
 But first, lets have a look at how we can simulate the harmonic oscillator (a spring mass damper 2nd order system) using PathSim. The system and its corresponding equivalent block diagram are shown in the figure below:
 
@@ -92,7 +92,7 @@ x0, v0 = 2, 5
 #parameters (mass, damping, spring constant)
 m, c, k = 0.8, 0.2, 1.5
 
-#define the blocks 
+#define the blocks
 I1 = Integrator(v0)   # integrator for velocity
 I2 = Integrator(x0)   # integrator for position
 A1 = Amplifier(-c/m)
@@ -143,14 +143,14 @@ The Van der Pol ODE can be translated into a block diagram like the one below, w
 ![png](https://raw.githubusercontent.com/pathsim/pathsim/master/docs/source/examples/figures/figures_g/vanderpol_blockdiagram_g.png)
 
 
-Lets translate it to PathSim using two `Integrator` blocks and a `Function` block. The parameter is set to $\mu = 1000$ which means severe stiffness. 
+Lets translate it to PathSim using two `Integrator` blocks and a `Function` block. The parameter is set to $\mu = 1000$ which means severe stiffness.
 
 
 ```python
 from pathsim import Simulation, Connection
 from pathsim.blocks import Integrator, Scope, Function
 
-#implicit adaptive timestep solver 
+#implicit adaptive timestep solver
 from pathsim.solvers import ESDIRK54
 
 #initial conditions
@@ -169,18 +169,18 @@ blocks = [I1, I2, Fn, Sc]
 
 #the connections between the blocks
 connections = [
-    Connection(I2, I1, Fn[1]), 
-    Connection(I1, Fn, Sc), 
+    Connection(I2, I1, Fn[1]),
+    Connection(I1, Fn, Sc),
     Connection(Fn, I2)
     ]
 
 #initialize simulation with the blocks, connections, timestep and logging enabled
 Sim = Simulation(
-    blocks, 
-    connections, 
-    dt=0.05, 
-    Solver=ESDIRK54, 
-    tolerance_lte_abs=1e-5, 
+    blocks,
+    connections,
+    dt=0.05,
+    Solver=ESDIRK54,
+    tolerance_lte_abs=1e-5,
     tolerance_lte_rel=1e-3
     )
 
@@ -196,9 +196,9 @@ Sc.plot(".-")
 
 ## Event Detection
 
-PathSim has an event handling system that monitors the simulation state and can find and locate discrete events by evaluating an event function and trigger callbacks or state transformations. Multiple event types are supported such as `ZeroCrossing` or `Schedule`. 
+PathSim has an event handling system that monitors the simulation state and can find and locate discrete events by evaluating an event function and trigger callbacks or state transformations. Multiple event types are supported such as `ZeroCrossing` or `Schedule`.
 
-This enables the simulation of hybrid continuous time systems with discrete events. 
+This enables the simulation of hybrid continuous time systems with discrete events.
 
 
 ![png](https://raw.githubusercontent.com/pathsim/pathsim/master/docs/source/examples/figures/figures_g/bouncing_ball_g.png)
@@ -227,7 +227,7 @@ x0, v0 = 1, 10
 
 #blocks that define the system
 Ix = Integrator(x0)     # v -> x
-Iv = Integrator(v0)     # a -> v 
+Iv = Integrator(v0)     # a -> v
 Cn = Constant(-9.81)    # gravitational acceleration
 Sc = Scope(labels=["x", "v"])
 
@@ -247,15 +247,15 @@ def func_evt(t):
 
 #action function for state transformation
 def func_act(t):
-    i1, o1, s1 = Ix() 
-    i2, o2, s2 = Iv() 
+    i1, o1, s1 = Ix()
+    i2, o2, s2 = Iv()
     Ix.engine.set(abs(s1))
     Iv.engine.set(-0.9*s2)
 
 #event (zero-crossing) -> ball makes contact
 E1 = ZeroCrossing(
-    func_evt=func_evt,                 
-    func_act=func_act, 
+    func_evt=func_evt,
+    func_act=func_act,
     tolerance=1e-4
     )
 
@@ -263,11 +263,11 @@ events = [E1]
 
 #initialize simulation with the blocks, connections, timestep
 Sim = Simulation(
-    blocks, 
-    connections, 
-    events, 
-    dt=0.1, 
-    Solver=RKBS32, 
+    blocks,
+    connections,
+    events,
+    dt=0.1,
+    Solver=RKBS32,
     dt_max=0.1
     )
 
@@ -305,4 +305,3 @@ ax.grid(True)
 
 
 ![png](https://raw.githubusercontent.com/pathsim/pathsim/master/docs/source/examples/figures/figures_g/bouncing_ball_result_timesteps_g.png)
-
